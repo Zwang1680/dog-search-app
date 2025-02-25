@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import dog from './assets/Stock-Dog.jpg'
 import logo from './assets/fetch_logo.png'
 import { login } from '../../services/fetchapi'
@@ -8,7 +8,13 @@ import './LoginPage.css'
 const LoginPage: React.FC = () => {
     const [name, setName] = useState('')
     const [email, setEmail] = useState('')
+    const [canSubmit, setCanSubmit] = useState(false);
     const nav = useNavigate();
+
+    useEffect(() => {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        setCanSubmit((name !== '') && emailRegex.test(email))
+    }, [name, email]);
 
     const submitLogin = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -41,7 +47,7 @@ const LoginPage: React.FC = () => {
                             <label>Email</label>
                             <input type="email" placeholder="name@example.com" value={email} onChange={(e) => setEmail(e.target.value)} />
                         </div>
-                        <button type="submit">Login</button>
+                        <button type="submit" disabled={!canSubmit}>Login</button>
                     </form>
                 </div>
             </div>
