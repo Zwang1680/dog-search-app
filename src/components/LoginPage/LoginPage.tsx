@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Toaster, toast } from 'sonner';
 import dog from './assets/Stock-Dog.jpg'
 import logo from './assets/fetch_logo.png'
 import { login } from '../../services/fetchapi'
@@ -22,8 +23,8 @@ const LoginPage: React.FC = () => {
             await login(name, email);
             console.log("SUCCESS")
             nav('/search');
-        } catch (err: any) {
-            console.log(err);
+        } catch (err: any) { 
+            toast('Login Failed')
         }
     }
 
@@ -49,6 +50,7 @@ const LoginPage: React.FC = () => {
                         </div>
                         <button type="submit" disabled={!canSubmit}>Login</button>
                     </form>
+                    <Toaster />
                 </div>
             </div>
         </div>
