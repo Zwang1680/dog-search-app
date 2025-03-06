@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Toaster, toast } from 'sonner';
 import dog from './assets/Stock-Dog.jpg'
 import logo from './assets/fetch_logo.png'
-import { login } from '../../services/fetchapi'
+import { fetchAPI } from '../../services/fetchapi'
 import { useNavigate } from 'react-router-dom';
 import './LoginPage.css'
 
@@ -20,11 +20,11 @@ const LoginPage: React.FC = () => {
     const submitLogin = async (e: React.FormEvent) => {
         e.preventDefault();
         try{
-            await login(name, email);
-            console.log("SUCCESS")
+            await fetchAPI.login(name, email);
             nav('/search');
         } catch (err: any) { 
-            toast('Login Failed')
+            toast('There was an issue please try again');
+            console.log(err.message);
         }
     }
 
