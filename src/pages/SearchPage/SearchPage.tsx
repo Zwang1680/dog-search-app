@@ -9,15 +9,14 @@ const SearchPage: React.FC = () => {
     const [page, setPage] = useState<{ next?: string; prev?: string}>({})
     const [searchParams, setSearchParams] = useState<any>({ size: 20, sort: 'name:asc' });
 
-    const handleSearch = useCallback(async (cursor?: string) => {
+    const handleSearch = useCallback(async (query?: string) => {
         try {
-            const searchResult = await fetchAPI.searchDogs({ ...searchParams, from: cursor });
+            const searchResult = await fetchAPI.searchDogs({ ...searchParams, from: query });
             console.log(searchResult);
             setPage({
-              next: searchResult.next || undefined,
-              prev: searchResult.prev || undefined,
+              next: getCursorFromUrl(searchResult.next) || undefined,
+              prev: getCursorFromUrl(searchResult.prev) || undefined,
             });
-            console.log(searchResult);
             const dogData: Dog[] = await fetchAPI.getDogsByIds(searchResult.resultIds);
             setDogs(dogData);
           } catch (error) {
@@ -25,6 +24,12 @@ const SearchPage: React.FC = () => {
             // Display error to the user
           }
     }, [searchParams]);
+
+    const getCursorFromUrl = (url?: string): string | undefined => {
+        if (!url) return undefined;
+        const params = new URLSearchParams(url.split('?')[1]); // Extract query parameters
+        return params.get('from') || undefined;
+    };
 
     useEffect(() => {
         fetchAPI.getBreeds().then(setBreeds);
