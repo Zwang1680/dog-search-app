@@ -4,14 +4,12 @@ interface SearchControlsProps {
   breeds: string[];
   searchParams: any;
   setSearchParams: React.Dispatch<React.SetStateAction<any>>;
-  onSearch: (cursor?: string) => void;
 }
 
 const SearchControls: React.FC<SearchControlsProps> = ({
   breeds,
   searchParams,
   setSearchParams,
-  onSearch,
 }) => {
   const [selectedBreeds, setSelectedBreeds] = useState<string[]>(searchParams.breeds || []);
   const [sortOption, setSortOption] = useState<string>(searchParams.sort || 'name:asc');
@@ -24,16 +22,13 @@ const SearchControls: React.FC<SearchControlsProps> = ({
   const handleBreedChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const selectedOptions = Array.from(e.target.selectedOptions, (option) => option.value);
     setSelectedBreeds(selectedOptions);
+    setSearchParams({ ...searchParams, breeds: selectedOptions }); // Corrected call
   };
 
   const handleSortChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setSortOption(e.target.value);
+    setSearchParams({ ...searchParams, sort: e.target.value }); // Corrected call
   };
-
-  const handleSearchClick = useCallback(() => {
-    setSearchParams({ ...searchParams, breeds: selectedBreeds, sort: sortOption });
-    onSearch();
-  }, [selectedBreeds, sortOption, searchParams, onSearch, setSearchParams]);
 
   return (
     <div>
@@ -53,8 +48,6 @@ const SearchControls: React.FC<SearchControlsProps> = ({
         <option value="breed:asc">Breed Ascending</option>
         <option value="breed:desc">Breed Descending</option>
       </select>
-
-      <button onClick={handleSearchClick}>Search</button>
     </div>
   );
 };

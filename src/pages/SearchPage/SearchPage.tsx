@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { Dog, fetchAPI } from '../../services/fetchapi';
 import SearchControls from './components/SearchControls';
+import useDebounce from './components/useDebounce';
 
 
 const SearchPage: React.FC = () => {
@@ -9,9 +10,11 @@ const SearchPage: React.FC = () => {
     const [page, setPage] = useState<{ next?: string; prev?: string}>({})
     const [searchParams, setSearchParams] = useState<any>({ size: 20, sort: 'name:asc' });
 
+    const debouncedSearchParams = useDebounce(searchParams, 500);
+
     const handleSearch = useCallback(async (query?: string) => {
         try {
-            const searchResult = await fetchAPI.searchDogs({ ...searchParams, from: query });
+            const searchResult = await fetchAPI.searchDogs({ ...debouncedSearchParams, from: query });
             console.log(searchResult);
             setPage({
               next: getCursorFromUrl(searchResult.next) || undefined,
@@ -21,13 +24,12 @@ const SearchPage: React.FC = () => {
             setDogs(dogData);
           } catch (error) {
             console.error('Error during dog search:', error);
-            // Display error to the user
           }
-    }, [searchParams]);
+    }, [debouncedSearchParams]);
 
     const getCursorFromUrl = (url?: string): string | undefined => {
         if (!url) return undefined;
-        const params = new URLSearchParams(url.split('?')[1]); // Extract query parameters
+        const params = new URLSearchParams(url.split('?')[1]);
         return params.get('from') || undefined;
     };
 
@@ -35,13 +37,21 @@ const SearchPage: React.FC = () => {
         fetchAPI.getBreeds().then(setBreeds);
     }, [])
 
+    useEffect(() => {
+        handleSearch();
+    }, [debouncedSearchParams, handleSearch]);
+
     return (
         <div>
             <SearchControls 
             breeds={breeds}
             searchParams={searchParams}
-            setSearchParams={setSearchParams}
-            onSearch={handleSearch}
+            setSearchParams={(partialParams) => {
+                setSearchParams((prevSearchParams: {}) => ({
+                  ...prevSearchParams,
+                  ...partialParams,
+                }))
+            }}
             />
             <div>
                 {dogs.map((dog) => (
