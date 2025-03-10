@@ -69,6 +69,10 @@ class FetchAPI {
     async getDogsByIds(dogIds: string[]): Promise<Dog[]> {
         return this.api.post<Dog[]>('/dogs', dogIds).then(this.handleResponse).catch(this.handleError);
     }
+
+    async sendFavorites(dogIds: string[]): Promise<{ match: string }> {
+        return this.api.post<{ match: string }>('/dogs/match', dogIds).then(this.handleResponse).catch(this.handleError);
+    }
 }
 
 export const fetchAPI = new FetchAPI();
