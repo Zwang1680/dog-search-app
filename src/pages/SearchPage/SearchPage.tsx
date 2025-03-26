@@ -3,6 +3,7 @@ import { Dog, fetchAPI } from '../../services/fetchapi';
 import SearchControls from './components/SearchControls';
 import useDebounce from './components/useDebounce';
 import DogGraph from './components/DogGraph';
+import './SearchPage.css'
 
 
 const SearchPage: React.FC = () => {
@@ -10,7 +11,7 @@ const SearchPage: React.FC = () => {
     const [dogs, setDogs] = useState<Dog[]>([]);
     const [page, setPage] = useState<{ next?: string; prev?: string}>({})
     const [searchParams, setSearchParams] = useState<any>({ size: 20, sort: 'name:asc' });
-    const [favoriteDogs, setFavoriteDogs] = useState<string[]>([]);
+    const [favoriteDogs, setFavoriteDogs] = useState<Dog[]>([]);
 
     const debouncedSearchParams = useDebounce(searchParams, 500);
 
@@ -35,14 +36,14 @@ const SearchPage: React.FC = () => {
         return params.get('from') || undefined;
     };
 
-    const handleAddToFavorites = (dogId: string) => {
-        if (!favoriteDogs.includes(dogId)) {
-            setFavoriteDogs([...favoriteDogs, dogId]);
+    const handleAddToFavorites = (favDog: Dog) => {
+        if (!favoriteDogs.includes(favDog)) {
+            setFavoriteDogs([...favoriteDogs, favDog]);
         }
     };
     
-    const handleRemoveFromFavorites = (dogId: string) => {
-        setFavoriteDogs(favoriteDogs.filter((id) => id !== dogId));
+    const handleRemoveFromFavorites = (favDog: Dog) => {
+        setFavoriteDogs(favoriteDogs.filter((dog) => dog.id !== favDog.id));
     };
 
     const handleSendFavorites = () => {
@@ -61,7 +62,7 @@ const SearchPage: React.FC = () => {
     }, [debouncedSearchParams, handleSearch]);
 
     return (
-        <div>
+        <div className="SearchPageContainer">
             <SearchControls 
             breeds={breeds}
             searchParams={searchParams}
@@ -73,16 +74,16 @@ const SearchPage: React.FC = () => {
             }}
             />
             <button onClick={handleSendFavorites}>Send Favorites</button>
+            <div>
+                {page.prev && <button className="join-item btn btn-outline" onClick={() => handleSearch(page.prev)}>Previous</button>}
+                {page.next && <button className="join-item btn btn-outline" onClick={() => handleSearch(page.next)}>Next</button>}
+            </div>
             <DogGraph
             dogs={dogs}
             favoriteDogs={favoriteDogs}
             onAddToFavorites={handleAddToFavorites}
             onRemoveFromFavorites={handleRemoveFromFavorites}
             />
-            <div>
-                {page.prev && <button onClick={() => handleSearch(page.prev)}>Previous</button>}
-                {page.next && <button onClick={() => handleSearch(page.next)}>Next</button>}
-            </div>
         </div>
     )
 };
