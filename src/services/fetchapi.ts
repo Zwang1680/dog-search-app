@@ -74,6 +74,14 @@ class FetchAPI {
         const dogIds = favDogs.map(dog => dog.id);
         return this.api.post<{ match: string }>('/dogs/match', dogIds).then(this.handleResponse).catch(this.handleError);
     }
+
+    async getLocationsByZipCodes(zipCodes: string[]): Promise<Location[]> {
+        return this.api.post<Location[]>('/locations', zipCodes).then(this.handleResponse).catch(this.handleError);
+    }
+    
+    async searchLocations(data: any): Promise<{ results: Location[]; total: number }> {
+        return this.api.post<{ results: Location[]; total: number }>('/locations/search', data).then(this.handleResponse).catch(this.handleError);
+    }
 }
 
 export const fetchAPI = new FetchAPI();

@@ -2,7 +2,8 @@ import React from 'react';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import { Dog } from '../../../services/fetchapi';
-import { Button, CardActions, CardMedia, Container, Grid, Grid2, Stack, Typography } from '@mui/material';
+import { Button, CardActions, CardMedia, Container, Fab, Grid, Grid2, Stack, Typography } from '@mui/material';
+import { Favorite, Remove } from '@mui/icons-material';
 
 interface DogGraphProps {
   dogs: Dog[];
@@ -20,12 +21,12 @@ const DogGraph: React.FC<DogGraphProps> = ({ dogs, favoriteDogs, onAddToFavorite
                 alignItems: "stretch",
             }}>
                 <Grid2 size={11}>
-                    <Grid2 container spacing={2}>
+                    <Grid2 container spacing={1}>
                         {dogs.map((dog) => (
-                            <Grid2 size={{ xs: 12, sm: 6, md: 4, lg: 3 }} key={dog.id}>
+                            <Grid2 size={{ xs: 12, sm: 6, md: 2.4 }} key={dog.id}>
                                 <Card>
                                     <CardMedia
-                                        sx={{ height: 200 }}
+                                        sx={{ height: 300 }}
                                         image={dog.img}
                                         title={dog.id}
                                     />
@@ -43,12 +44,16 @@ const DogGraph: React.FC<DogGraphProps> = ({ dogs, favoriteDogs, onAddToFavorite
                                     </CardContent>
                                     {!favoriteDogs?.includes(dog) && (
                                         <CardActions>
-                                                <Button onClick={() => {onAddToFavorites(dog)}}>Favorite</Button>
+                                                <Fab size='small' aria-label='like' onClick={() => {onAddToFavorites(dog)}}>
+                                                    <Favorite/>
+                                                </Fab>
                                         </CardActions>
                                     )}
                                     {favoriteDogs?.includes(dog) && (
                                         <CardActions>
-                                            <Button onClick={() => onRemoveFromFavorites(dog)}>Remove</Button>
+                                            <Fab size='small' aria-label='remove' onClick={() => onRemoveFromFavorites(dog)}>
+                                                <Remove/>
+                                            </Fab>
                                         </CardActions>
                                     )}
                                 </Card> 
@@ -63,7 +68,7 @@ const DogGraph: React.FC<DogGraphProps> = ({ dogs, favoriteDogs, onAddToFavorite
                         alignItems: "center",
                     }}>
                         {favoriteDogs?.map((dog) => (
-                            <Card>
+                            <Card key={dog.id}>
                                 <CardMedia
                                     sx={{ height: 140 }}
                                     image={dog.img}
