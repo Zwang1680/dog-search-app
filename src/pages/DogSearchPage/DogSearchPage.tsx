@@ -10,13 +10,15 @@ const DogSearchPage: React.FC = () => {
     const [breeds, setBreeds] = useState<string[]>([]);
     const [dogs, setDogs] = useState<Dog[]>([]);
     const [page, setPage] = useState(0);
-    const [numDogsPerPage, setNumDogsPerPage] = useState(10);
+    const [numDogsPerPage, setNumDogsPerPage] = useState(15);
     const [totalDogs, setTotalDogs] = useState(1);
     const [searchParams, setSearchParams] = useState<any>({ sort: 'name:asc' });
     const [favoriteDogs, setFavoriteDogs] = useState<Dog[]>([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedLocations, setSelectedLocations] = useState<Location[]>([]);
     const isFetching = useRef(false);
+
+    const numDogOptions = [15, 30, 50, 100]
 
     const debouncedSearchParams = useDebounce(searchParams, 500);
 
@@ -120,6 +122,7 @@ const DogSearchPage: React.FC = () => {
                     rowsPerPage={numDogsPerPage}
                     onRowsPerPageChange={handleChangeDogsPerPage}
                     labelRowsPerPage='Dogs per page:'
+                    rowsPerPageOptions={numDogOptions}
                     />
                 </Box>
             )}

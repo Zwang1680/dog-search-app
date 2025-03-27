@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import { Dog } from '../../../services/fetchapi';
-import { Button, CardActions, CardMedia, Container, Fab, Grid, Grid2, Stack, Typography } from '@mui/material';
+import { Box, Button, CardActions, CardMedia, Container, Divider, Fab, Grid, Grid2, Stack, Typography } from '@mui/material';
 import { Favorite, Remove } from '@mui/icons-material';
 
 interface DogGraphProps {
@@ -13,6 +13,7 @@ interface DogGraphProps {
 }
 
 const DogGraph: React.FC<DogGraphProps> = ({ dogs, favoriteDogs, onAddToFavorites, onRemoveFromFavorites }) => {
+    const [selectedDog, setSelectedDog] = useState<Dog>();
 
     return (
         <Container className="dogListContainer" maxWidth="xl">
@@ -20,13 +21,17 @@ const DogGraph: React.FC<DogGraphProps> = ({ dogs, favoriteDogs, onAddToFavorite
                 justifyContent: "flex-start",
                 alignItems: "stretch",
             }}>
-                <Grid2 size={11}>
-                    <Grid2 container spacing={1}>
+                <Grid2 size={10.4}>
+                    <Grid2 container spacing={1}
+                    sx={{
+                        height: '100vh',
+                        overflowY: 'auto',
+                    }}>
                         {dogs.map((dog) => (
                             <Grid2 size={{ xs: 12, sm: 6, md: 2.4 }} key={dog.id}>
                                 <Card>
                                     <CardMedia
-                                        sx={{ height: 300 }}
+                                        sx={{ height: 250 }}
                                         image={dog.img}
                                         title={dog.id}
                                     />
@@ -44,14 +49,14 @@ const DogGraph: React.FC<DogGraphProps> = ({ dogs, favoriteDogs, onAddToFavorite
                                     </CardContent>
                                     {!favoriteDogs?.includes(dog) && (
                                         <CardActions>
-                                                <Fab size='small' aria-label='like' onClick={() => {onAddToFavorites(dog)}}>
+                                                <Fab color='primary' size='small' aria-label='like' onClick={() => {onAddToFavorites(dog)}}>
                                                     <Favorite/>
                                                 </Fab>
                                         </CardActions>
                                     )}
                                     {favoriteDogs?.includes(dog) && (
                                         <CardActions>
-                                            <Fab size='small' aria-label='remove' onClick={() => onRemoveFromFavorites(dog)}>
+                                            <Fab color='warning' size='small' aria-label='remove' onClick={() => onRemoveFromFavorites(dog)}>
                                                 <Remove/>
                                             </Fab>
                                         </CardActions>
@@ -61,14 +66,25 @@ const DogGraph: React.FC<DogGraphProps> = ({ dogs, favoriteDogs, onAddToFavorite
                         ))}
                     </Grid2>
                 </Grid2>
-                <Grid2 size={1}>
+                <Divider orientation="vertical" flexItem />
+                <Grid2 size={1.4}>
                     <Typography sx={{textAlign: "center"}} variant="body2" >Favorite Dogs</Typography>
-                    <Stack spacing={2} sx={{
-                        justifyContent: "flex-start",
-                        alignItems: "center",
-                    }}>
+                    <Box
+                        sx={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        height: '100vh',
+                        overflowY: 'auto',
+                    }}
+                    >
                         {favoriteDogs?.map((dog) => (
-                            <Card key={dog.id}>
+                            <Card 
+                            key={dog.id} 
+                            sx={{ 
+                                padding: 2, 
+                                marginBottom: 1, 
+                                flexShrink: 0 
+                            }}>
                                 <CardMedia
                                     sx={{ height: 140 }}
                                     image={dog.img}
@@ -84,7 +100,7 @@ const DogGraph: React.FC<DogGraphProps> = ({ dogs, favoriteDogs, onAddToFavorite
                                 </CardActions>
                             </Card>
                         ))}
-                    </Stack>
+                    </Box>
                 </Grid2>
             </Grid2>
         </Container>
