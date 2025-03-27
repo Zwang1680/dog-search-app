@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import { Dog } from '../../../services/fetchapi';
-import { Box, Button, CardActions, CardMedia, Container, Divider, Fab, Grid, Grid2, Stack, Typography } from '@mui/material';
+import { Box, Button, CardActions, CardMedia, Container, Divider, Fab, Grid2, ImageList, ImageListItem, ImageListItemBar, Typography } from '@mui/material';
 import { Favorite, Remove } from '@mui/icons-material';
 
 interface DogGraphProps {
@@ -13,8 +13,6 @@ interface DogGraphProps {
 }
 
 const DogGraph: React.FC<DogGraphProps> = ({ dogs, favoriteDogs, onAddToFavorites, onRemoveFromFavorites }) => {
-    const [selectedDog, setSelectedDog] = useState<Dog>();
-
     return (
         <Container className="dogListContainer" maxWidth="xl">
             <Grid2 container direction="row" spacing={2} sx={{
@@ -22,49 +20,36 @@ const DogGraph: React.FC<DogGraphProps> = ({ dogs, favoriteDogs, onAddToFavorite
                 alignItems: "stretch",
             }}>
                 <Grid2 size={10.4}>
-                    <Grid2 container spacing={1}
-                    sx={{
-                        height: '100vh',
-                        overflowY: 'auto',
-                    }}>
+                    <ImageList sx={{ width: '100%', height: '100%'}} cols={5}>
                         {dogs.map((dog) => (
-                            <Grid2 size={{ xs: 12, sm: 6, md: 2.4 }} key={dog.id}>
-                                <Card>
-                                    <CardMedia
-                                        sx={{ height: 250 }}
-                                        image={dog.img}
-                                        title={dog.id}
-                                    />
-                                    <CardContent>
-                                        <Typography gutterBottom variant="body1" component="div">
-                                            {dog.name}
-                                        </Typography>
-                                        <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                                            Breed: {dog.breed}
-                                            <br />
-                                            Age: {dog.age}
-                                            <br />
-                                            Zip Code: {dog.zip_code}
-                                        </Typography>
-                                    </CardContent>
-                                    {!favoriteDogs?.includes(dog) && (
-                                        <CardActions>
-                                                <Fab color='primary' size='small' aria-label='like' onClick={() => {onAddToFavorites(dog)}}>
-                                                    <Favorite/>
+                            <ImageListItem key={dog.id}>
+                                <img
+                                    src={dog.img}
+                                    alt={dog.name}
+                                    loading="lazy"
+                                />
+                                <ImageListItemBar
+                                    title={dog.name}
+                                    subtitle={dog.breed}
+                                    actionIcon={
+                                        !favoriteDogs?.includes(dog) ? (
+                                            <CardActions>
+                                                    <Fab color='primary' size='small' aria-label='like' onClick={() => {onAddToFavorites(dog)}}>
+                                                        <Favorite/>
+                                                    </Fab>
+                                            </CardActions>
+                                        ) : (
+                                            <CardActions>
+                                                <Fab color='warning' size='small' aria-label='remove' onClick={() => onRemoveFromFavorites(dog)}>
+                                                    <Remove/>
                                                 </Fab>
-                                        </CardActions>
-                                    )}
-                                    {favoriteDogs?.includes(dog) && (
-                                        <CardActions>
-                                            <Fab color='warning' size='small' aria-label='remove' onClick={() => onRemoveFromFavorites(dog)}>
-                                                <Remove/>
-                                            </Fab>
-                                        </CardActions>
-                                    )}
-                                </Card> 
-                            </Grid2>
+                                            </CardActions>
+                                        )
+                                    }
+                                />
+                            </ImageListItem>
                         ))}
-                    </Grid2>
+                    </ImageList>
                 </Grid2>
                 <Divider orientation="vertical" flexItem />
                 <Grid2 size={1.4}>

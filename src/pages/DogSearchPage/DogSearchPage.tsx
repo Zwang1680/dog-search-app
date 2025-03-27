@@ -4,7 +4,9 @@ import SearchControls from './components/SearchControls';
 import useDebounce from './components/useDebounce';
 import DogGraph from './components/DogGraph';
 import './DogSearchPage.css'
-import { Box, Button, Grid2, Modal, Paper, TablePagination } from '@mui/material';
+import { AppBar, Box, Button, Container, createTheme, Grid2, Modal, Paper, TablePagination, ThemeProvider, Toolbar, Typography } from '@mui/material';
+import { Pets, Send } from '@mui/icons-material';
+import { useNavigate } from 'react-router-dom';
 
 const DogSearchPage: React.FC = () => {
     const [breeds, setBreeds] = useState<string[]>([]);
@@ -16,6 +18,7 @@ const DogSearchPage: React.FC = () => {
     const [favoriteDogs, setFavoriteDogs] = useState<Dog[]>([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedLocations, setSelectedLocations] = useState<Location[]>([]);
+    const nav = useNavigate();
     const isFetching = useRef(false);
 
     const numDogOptions = [15, 30, 50, 100]
@@ -94,24 +97,72 @@ const DogSearchPage: React.FC = () => {
     ) => {
         setPage(newPage);
     };
+
+    const handleLogout = () => {
+        localStorage.removeItem('token'); 
+        nav('/');
+      };
+    
+
+    const darkTheme = createTheme({
+        palette: {
+          mode: 'dark',
+          primary: {
+            main: '#cc00cc',
+          },
+        },
+    });
     
 
     return (
+    <ThemeProvider theme={darkTheme}>
+    <AppBar position="static">
+            <Container maxWidth="xl">
+                <Toolbar sx={{ justifyContent: 'space-between' }} disableGutters>
+                    <Pets/>
+                    <Typography
+                    variant='h6'
+                    noWrap
+                    component='a'
+                    sx={{
+                        mr: 2,
+                        display: { xs: 'none', md: 'flex' },
+                        fontFamily: 'monospace',
+                        fontWeight: 700,
+                        letterSpacing: '.3rem',
+                        color: 'inherit',
+                        textDecoration: 'none',
+                        margin: 1,
+                    }}>
+                        Dog Search
+                    </Typography>
+                    <Box sx={{ flexGrow: 1, display: 'flex' }}>
+                        <Button
+                            variant="contained"
+                            endIcon={<Send/>} 
+                            onClick={handleSendFavorites}
+                        >
+                            Match
+                        </Button>
+                    </Box>
+                    <Button sx={{margin: 1}} key='Filters' onClick={() => setIsModalOpen(true)}>
+                        Filters
+                    </Button>
+                    <Button variant="outlined" onClick={handleLogout}>
+                        Logout
+                    </Button>
+                </Toolbar>
+            </Container>
+        </AppBar>
     <Grid2 container spacing={2}>
       <Grid2 size={{ xs: 12, md: 12}}>
         <Paper elevation={3} style={{ padding: '20px' }}>
-            <Button variant="contained" color="primary" onClick={() => setIsModalOpen(true)}>
-            Filters
-            </Button>
             <DogGraph
             dogs={dogs}
             favoriteDogs={favoriteDogs}
             onAddToFavorites={handleAddToFavorites}
             onRemoveFromFavorites={handleRemoveFromFavorites}
             />
-            <Button variant="contained" color="primary" onClick={handleSendFavorites}>
-            Send Favorites
-            </Button>
             {totalDogs > 1 && (
                 <Box display="flex" justifyContent="center" mt={3}>
                     <TablePagination
@@ -145,6 +196,7 @@ const DogSearchPage: React.FC = () => {
         </Paper>
       </Modal>
     </Grid2>
+    </ThemeProvider>
     )
 };
 

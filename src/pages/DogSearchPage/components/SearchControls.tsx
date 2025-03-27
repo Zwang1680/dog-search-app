@@ -39,7 +39,9 @@ const SearchControls: React.FC<SearchControlsProps> = ({
 
   const handleLocationSearchFunction = useCallback(async () => {
     try {
+      console.log(debouncedLocationSearch);
       const results = await fetchAPI.searchLocations(debouncedLocationSearch);
+      console.log(results);
       setLocationResults(results.results);
     } catch (error) {
       console.error('Error searching locations:', error);
