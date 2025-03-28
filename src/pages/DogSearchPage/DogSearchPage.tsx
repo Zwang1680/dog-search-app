@@ -132,97 +132,97 @@ const DogSearchPage: React.FC = () => {
     
 
     return (
-    <ThemeProvider theme={darkTheme}>
-        <AppBar position="static">
-                <Container maxWidth="xl">
-                    <Toolbar sx={{ justifyContent: 'space-between' }} disableGutters>
-                        <Pets/>
-                        <Typography
-                        variant='h6'
-                        noWrap
-                        component='a'
-                        sx={{
-                            mr: 2,
-                            display: { xs: 'none', md: 'flex' },
-                            fontFamily: 'monospace',
-                            fontWeight: 700,
-                            letterSpacing: '.3rem',
-                            color: 'inherit',
-                            textDecoration: 'none',
-                            margin: 1,
-                        }}>
-                            Dog Search
-                        </Typography>
-                        <Box sx={{ flexGrow: 1, display: 'flex' }}>
-                            <Button
-                                variant="contained"
-                                endIcon={<Send/>} 
-                                onClick={handleSendFavorites}
-                            >
-                                Match!
+        <ThemeProvider theme={darkTheme}>
+            <AppBar position="static">
+                    <Container maxWidth="xl">
+                        <Toolbar sx={{ justifyContent: 'space-between' }} disableGutters>
+                            <Pets/>
+                            <Typography
+                            variant='h6'
+                            noWrap
+                            component='a'
+                            sx={{
+                                mr: 2,
+                                display: { xs: 'none', md: 'flex' },
+                                fontFamily: 'monospace',
+                                fontWeight: 700,
+                                letterSpacing: '.3rem',
+                                color: 'inherit',
+                                textDecoration: 'none',
+                                margin: 1,
+                            }}>
+                                Dog Search
+                            </Typography>
+                            <Box sx={{ flexGrow: 1, display: 'flex' }}>
+                                <Button
+                                    variant="contained"
+                                    endIcon={<Send/>} 
+                                    onClick={handleSendFavorites}
+                                >
+                                    Match!
+                                </Button>
+                            </Box>
+                            <Button sx={{margin: 1}} key='Filters' onClick={() => setIsModalOpen(true)}>
+                                Filters
                             </Button>
-                        </Box>
-                        <Button sx={{margin: 1}} key='Filters' onClick={() => setIsModalOpen(true)}>
-                            Filters
-                        </Button>
-                        <Button variant="outlined" onClick={handleLogout}>
-                            Logout
-                        </Button>
-                    </Toolbar>
-                </Container>
-            </AppBar>
-        <Grid2 container spacing={2}>
-            <Grid2 size={{ xs: 12, md: 12}}>
-                <Paper elevation={3} style={{ padding: '20px' }}>
-                    <DogGraph
-                    dogs={dogs}
+                            <Button variant="outlined" onClick={handleLogout}>
+                                Logout
+                            </Button>
+                        </Toolbar>
+                    </Container>
+                </AppBar>
+            <Grid2 container spacing={2}>
+                <Grid2 size={{ xs: 12, md: 12}}>
+                    <Paper elevation={3} style={{ padding: '20px' }}>
+                        <DogGraph
+                        dogs={dogs}
+                        favoriteDogs={favoriteDogs}
+                        onAddToFavorites={handleAddToFavorites}
+                        onRemoveFromFavorites={handleRemoveFromFavorites}
+                        />
+                        {totalDogs > 1 && (
+                            <Box display="flex" justifyContent="center" mt={3}>
+                                <TablePagination
+                                component='div'
+                                count={totalDogs}
+                                page={page}
+                                onPageChange={handleChangePage}
+                                rowsPerPage={numDogsPerPage}
+                                onRowsPerPageChange={handleChangeDogsPerPage}
+                                labelRowsPerPage='Dogs per page:'
+                                rowsPerPageOptions={numDogOptions}
+                                />
+                            </Box>
+                        )}
+                    </Paper>
+                </Grid2>
+                <DogInfo
+                    selectedDog={matchedDog}
+                    isInfoOpen={showMatchedDog}
+                    handleClose={handleMatchClose}
+                    isMatchDog={true}
                     favoriteDogs={favoriteDogs}
                     onAddToFavorites={handleAddToFavorites}
                     onRemoveFromFavorites={handleRemoveFromFavorites}
-                    />
-                    {totalDogs > 1 && (
-                        <Box display="flex" justifyContent="center" mt={3}>
-                            <TablePagination
-                            component='div'
-                            count={totalDogs}
-                            page={page}
-                            onPageChange={handleChangePage}
-                            rowsPerPage={numDogsPerPage}
-                            onRowsPerPageChange={handleChangeDogsPerPage}
-                            labelRowsPerPage='Dogs per page:'
-                            rowsPerPageOptions={numDogOptions}
-                            />
-                        </Box>
-                    )}
-                </Paper>
-            </Grid2>
-            <DogInfo
-                selectedDog={matchedDog}
-                isInfoOpen={showMatchedDog}
-                handleClose={handleMatchClose}
-                isMatchDog={true}
-                favoriteDogs={favoriteDogs}
-                onAddToFavorites={handleAddToFavorites}
-                onRemoveFromFavorites={handleRemoveFromFavorites}
-            />
-            <Modal open={isModalOpen} onClose={() => setIsModalOpen(false)}>
-                <Paper style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', padding: '20px' }}>
-                <SearchControls
-                    breeds={breeds}
-                    searchParams={searchParams}
-                    setSearchParams={(partialParams) => {
-                    setSearchParams((prevSearchParams: {}) => ({
-                        ...prevSearchParams,
-                        ...partialParams,
-                    }));
-                    }}
-                    selectedLocations={selectedLocations}
-                    onLocationsChange={handleLocationsChange}
                 />
-                </Paper>
-            </Modal>
-        </Grid2>
-    </ThemeProvider>
+                <Modal open={isModalOpen} onClose={() => setIsModalOpen(false)}>
+                    <Paper style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', padding: '20px' }}>
+                    <SearchControls
+                        breeds={breeds}
+                        searchParams={searchParams}
+                        setSearchParams={(partialParams) => {
+                        setSearchParams((prevSearchParams: {}) => ({
+                            ...prevSearchParams,
+                            ...partialParams,
+                        }));
+                        }}
+                        selectedLocations={selectedLocations}
+                        onLocationsChange={handleLocationsChange}
+                    />
+                    </Paper>
+                </Modal>
+            </Grid2>
+        </ThemeProvider>
     )
 };
 
