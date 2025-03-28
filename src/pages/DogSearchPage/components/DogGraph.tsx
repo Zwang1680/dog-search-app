@@ -1,9 +1,13 @@
-import React, { useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
-import { Dog } from '../../../services/fetchapi';
-import { Box, Button, CardActions, CardMedia, Container, Dialog, Divider, Drawer, Fab, Grid2, ImageList, ImageListItem, ImageListItemBar, Modal, Typography } from '@mui/material';
-import { ArrowForwardIos, Favorite, Remove } from '@mui/icons-material';
+import { Dog, fetchAPI, Location } from '../../../services/fetchapi';
+import { Box, Button, CardActions, CardMedia, CircularProgress, Container, Dialog, DialogContent, DialogTitle, Divider, Drawer, Fab, Grid2, ImageList, ImageListItem, ImageListItemBar, Modal, Typography } from '@mui/material';
+import { ArrowForwardIos, FastRewind, Favorite, Remove } from '@mui/icons-material';
+import useDebounce from './useDebounce';
+import MapView from 'react-native-maps';
+import { GoogleMap, Marker } from 'react-google-maps';
+import { Map } from 'mapbox-gl';
 
 interface DogGraphProps {
   dogs: Dog[];
@@ -13,9 +17,38 @@ interface DogGraphProps {
 }
 
 const DogGraph: React.FC<DogGraphProps> = ({ dogs, favoriteDogs, onAddToFavorites, onRemoveFromFavorites }) => {
+    const resetDog: Dog = {id: '', name: '', breed: '', img: '', age: 0, zip_code: ''}
+    const resetLocation: Location = {zip_code: '', longitude: 0, latitude: 0, city: '', state: '', county: ''};
+
     const [isFavVisible, setIsFavVisible] = useState<boolean>(false);
-    const [selectedDog, setSelectedDog] = useState<Dog>();
+    const [selectedDog, setSelectedDog] = useState<Dog>(resetDog);
+    const [selectedDogLocation, setSelectedDogLocation] = useState<Location>(resetLocation);
     const [isInfoOpen, setIsInfoOpen] = useState<boolean>(false);
+
+    const debouncedDog = useDebounce(selectedDog, 500);
+
+    const getSelectedDogLocation = useCallback(async () => {
+        if (!debouncedDog) return
+        try {
+            const result : Location[] = await fetchAPI.getLocationsByZipCodes([debouncedDog?.zip_code]);
+            if (result.length > 0){
+                setSelectedDogLocation(result[0]);
+            }
+        } catch (err) {
+            console.error('Error during dog search:', err);
+        }
+    }, [debouncedDog]);
+
+    useEffect(() => {
+        getSelectedDogLocation();
+    }, [getSelectedDogLocation]);
+
+    const handleClose = () => {
+        setIsInfoOpen(false);
+        setSelectedDog(resetDog);
+        setSelectedDogLocation(resetLocation);
+    };
+
 
     const toggleDrawer = (newOpen: boolean) => () => {
         setIsFavVisible(newOpen);
@@ -84,7 +117,7 @@ const DogGraph: React.FC<DogGraphProps> = ({ dogs, favoriteDogs, onAddToFavorite
                     <Box sx={{width: '100%', display:'flex', justifyContent:'flex-start'}}>
                         <Button onClick={toggleDrawer(true)}>
                             <Typography variant="body2">
-                                Show Favorite Dogs
+                                Show Liked Dogs
                             </Typography>
                             <ArrowForwardIos/>
                         </Button>
@@ -130,35 +163,49 @@ const DogGraph: React.FC<DogGraphProps> = ({ dogs, favoriteDogs, onAddToFavorite
                     </ImageList>
                 </Box>
             </Drawer>
-            <Dialog open={isInfoOpen} onClose={() => setIsInfoOpen(false)}>
+            <Dialog open={isInfoOpen} onClose={handleClose}>
+                <DialogTitle>More Info</DialogTitle>
                 {
-                    selectedDog ? (
-                        <Card sx={{ display: 'flex'}}>
-                            <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-                                <CardContent sx={{ flex: '1 0 auto'}}>
-                                <Typography variant='subtitle1' component='div' sx={{color: 'text.secondary'}}>
-                                        {selectedDog.name}
-                                    </Typography>
-                                    <Typography variant='subtitle1' component='div' sx={{color: 'text.secondary'}}>
-                                        Age: {selectedDog.age}
-                                    </Typography>
-                                    <Typography variant='subtitle1' component='div' sx={{color: 'text.secondary'}}>
-                                        Breed: {selectedDog.breed}
-                                    </Typography>
-                                    <Typography variant='subtitle1' component='div' sx={{color: 'text.secondary'}}>
-                                        Zip Code: {selectedDog.zip_code}
-                                    </Typography>
-                                </CardContent>
-                            </Box>
-                            <CardMedia
-                                component="img"
-                                sx={{ width: '400px'}}
-                                image={selectedDog.img}
-                                alt={selectedDog.id}
-                            />
-                        </Card>
+                    selectedDog.id !== '' ? (
+                            <DialogContent sx={{display: 'flex', alignContent: 'center', justifyContent: 'center' }}>
+                                <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+                                    <CardContent sx={{ flex: '1 0 auto'}}>
+                                        <Typography variant='body2' component='div' sx={{color: 'text.secondary'}}>
+                                            {selectedDog.name}
+                                        </Typography>
+                                        <Typography variant='body2' component='div' sx={{color: 'text.secondary'}}>
+                                            Age: {selectedDog.age}
+                                        </Typography>
+                                        <Typography variant='body2' component='div' sx={{color: 'text.secondary'}}>
+                                            Breed: {selectedDog.breed}
+                                        </Typography>
+                                        {
+                                            selectedDogLocation !== null ? (
+                                                <Box>
+                                                    <Typography variant='body2' component='div' sx={{color: 'text.secondary'}}>
+                                                        Location: {`${selectedDogLocation.city}, ${selectedDogLocation.state} ${selectedDogLocation.zip_code}`}
+                                                    </Typography>
+                                                    <Map
+                                                </Box>
+                                            ) : (
+                                                <Typography variant='body2' component='div' sx={{color: 'text.secondary'}}>
+                                                    Zip Code: {selectedDog.zip_code}
+                                                </Typography>
+                                            )
+                                        }
+                                    </CardContent>
+                                </Box>
+                                <CardMedia
+                                    component="img"
+                                    sx={{ width: '200px'}}
+                                    image={selectedDog.img}
+                                    alt={selectedDog.id}
+                                />
+                            </DialogContent>
                     ) : (
-                        <Box></Box>
+                        <DialogContent>
+                            <CircularProgress />
+                        </DialogContent>
                     )
                 }
             </Dialog>
