@@ -70,19 +70,22 @@ const DogInfo: React.FC<DogInfoProps> = ({selectedDog, isInfoOpen, handleClose, 
                                             </Typography>
                                         </Box>
                                         {
-                                            !favoriteDogs?.includes(selectedDog) ? (
+                                            !favoriteDogs?.includes(selectedDog) && !isMatchDog ? (
                                             <CardActions sx={{marginLeft: 8}}>
                                                 <Fab color='primary' size='large' aria-label='like' onClick={() => {onAddToFavorites(selectedDog)}}>
                                                     <Favorite/>
                                                 </Fab>
                                                 </CardActions>
-                                            ) : (
+                                            ) : !isMatchDog ? (
                                                 <CardActions sx={{marginLeft: 8}}>
                                                     <Fab color='warning' size='large' aria-label='remove' onClick={() => onRemoveFromFavorites(selectedDog)}>
                                                         <Remove/>
                                                     </Fab>
                                                 </CardActions>
-                                        )}
+                                        ) : (
+                                            <Box/>
+                                        )
+                                    }
                                     </Box>
                                     <Divider sx={{ margin: 2}}/>
                                     <Box>
