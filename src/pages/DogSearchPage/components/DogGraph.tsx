@@ -1,13 +1,10 @@
-import React, { useCallback, useEffect, useState } from 'react';
-import Card from '@mui/material/Card';
-import CardContent from '@mui/material/CardContent';
-import { Dog, fetchAPI, Location } from '../../../services/fetchapi';
-import { Box, Button, CardActions, CardMedia, CircularProgress, Container, Dialog, DialogContent, DialogTitle, Divider, Drawer, Fab, Grid2, ImageList, ImageListItem, ImageListItemBar, Modal, Typography } from '@mui/material';
-import { ArrowForwardIos, FastRewind, Favorite, Remove } from '@mui/icons-material';
-import useDebounce from './useDebounce';
-import MapView from 'react-native-maps';
-import { GoogleMap, Marker } from 'react-google-maps';
-import { Map } from 'mapbox-gl';
+import React, { useState } from 'react';
+import { Dog } from '../../../services/fetchapi';
+import { Box, Button, CardActions, Container, Divider, Drawer, Fab, Grid2, ImageList, ImageListItem, ImageListItemBar, Typography } from '@mui/material';
+import { ArrowForwardIos, Favorite, Remove } from '@mui/icons-material';
+import 'mapbox-gl/dist/mapbox-gl.css';
+import './DogGraph.css'
+import DogInfo from './DogInfo';
 
 interface DogGraphProps {
   dogs: Dog[];
@@ -16,37 +13,17 @@ interface DogGraphProps {
   onRemoveFromFavorites: (dogId: Dog) => void;
 }
 
+export const resetDog: Dog = {id: '', name: '', breed: '', img: '', age: 0, zip_code: ''}
+
 const DogGraph: React.FC<DogGraphProps> = ({ dogs, favoriteDogs, onAddToFavorites, onRemoveFromFavorites }) => {
-    const resetDog: Dog = {id: '', name: '', breed: '', img: '', age: 0, zip_code: ''}
-    const resetLocation: Location = {zip_code: '', longitude: 0, latitude: 0, city: '', state: '', county: ''};
 
     const [isFavVisible, setIsFavVisible] = useState<boolean>(false);
     const [selectedDog, setSelectedDog] = useState<Dog>(resetDog);
-    const [selectedDogLocation, setSelectedDogLocation] = useState<Location>(resetLocation);
     const [isInfoOpen, setIsInfoOpen] = useState<boolean>(false);
-
-    const debouncedDog = useDebounce(selectedDog, 500);
-
-    const getSelectedDogLocation = useCallback(async () => {
-        if (!debouncedDog) return
-        try {
-            const result : Location[] = await fetchAPI.getLocationsByZipCodes([debouncedDog?.zip_code]);
-            if (result.length > 0){
-                setSelectedDogLocation(result[0]);
-            }
-        } catch (err) {
-            console.error('Error during dog search:', err);
-        }
-    }, [debouncedDog]);
-
-    useEffect(() => {
-        getSelectedDogLocation();
-    }, [getSelectedDogLocation]);
 
     const handleClose = () => {
         setIsInfoOpen(false);
         setSelectedDog(resetDog);
-        setSelectedDogLocation(resetLocation);
     };
 
 
@@ -63,6 +40,7 @@ const DogGraph: React.FC<DogGraphProps> = ({ dogs, favoriteDogs, onAddToFavorite
         return (
             <ImageListItem key={dog.id}>
             <img
+                className='clickable-img'
                 src={dog.img}
                 alt={dog.name}
                 loading="lazy"
@@ -163,52 +141,15 @@ const DogGraph: React.FC<DogGraphProps> = ({ dogs, favoriteDogs, onAddToFavorite
                     </ImageList>
                 </Box>
             </Drawer>
-            <Dialog open={isInfoOpen} onClose={handleClose}>
-                <DialogTitle>More Info</DialogTitle>
-                {
-                    selectedDog.id !== '' ? (
-                            <DialogContent sx={{display: 'flex', alignContent: 'center', justifyContent: 'center' }}>
-                                <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-                                    <CardContent sx={{ flex: '1 0 auto'}}>
-                                        <Typography variant='body2' component='div' sx={{color: 'text.secondary'}}>
-                                            {selectedDog.name}
-                                        </Typography>
-                                        <Typography variant='body2' component='div' sx={{color: 'text.secondary'}}>
-                                            Age: {selectedDog.age}
-                                        </Typography>
-                                        <Typography variant='body2' component='div' sx={{color: 'text.secondary'}}>
-                                            Breed: {selectedDog.breed}
-                                        </Typography>
-                                        {
-                                            selectedDogLocation !== null ? (
-                                                <Box>
-                                                    <Typography variant='body2' component='div' sx={{color: 'text.secondary'}}>
-                                                        Location: {`${selectedDogLocation.city}, ${selectedDogLocation.state} ${selectedDogLocation.zip_code}`}
-                                                    </Typography>
-                                                    <Map
-                                                </Box>
-                                            ) : (
-                                                <Typography variant='body2' component='div' sx={{color: 'text.secondary'}}>
-                                                    Zip Code: {selectedDog.zip_code}
-                                                </Typography>
-                                            )
-                                        }
-                                    </CardContent>
-                                </Box>
-                                <CardMedia
-                                    component="img"
-                                    sx={{ width: '200px'}}
-                                    image={selectedDog.img}
-                                    alt={selectedDog.id}
-                                />
-                            </DialogContent>
-                    ) : (
-                        <DialogContent>
-                            <CircularProgress />
-                        </DialogContent>
-                    )
-                }
-            </Dialog>
+            <DogInfo
+                selectedDog={selectedDog}
+                isInfoOpen={isInfoOpen}
+                handleClose={handleClose}
+                isMatchDog={false}
+                favoriteDogs={favoriteDogs}
+                onAddToFavorites={onAddToFavorites}
+                onRemoveFromFavorites={onRemoveFromFavorites}
+            />
         </Container>
     );
 };
