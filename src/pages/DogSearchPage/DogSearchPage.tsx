@@ -158,6 +158,7 @@ const DogSearchPage: React.FC = () => {
                                     variant="contained"
                                     endIcon={<Send/>} 
                                     onClick={handleSendFavorites}
+                                    disabled={!(favoriteDogs.length > 0)}
                                 >
                                     Match!
                                 </Button>
