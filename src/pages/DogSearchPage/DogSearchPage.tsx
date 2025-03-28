@@ -1,10 +1,10 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { Dog, fetchAPI, Location } from '../../services/fetchapi';
+import { Dog, DogSearchParams, fetchAPI, Location } from '../../services/fetchapi';
 import SearchControls from './components/SearchControls';
 import useDebounce from './components/useDebounce';
 import DogGraph from './components/DogGraph';
 import './DogSearchPage.css'
-import { AppBar, Box, Button, Container, createTheme, Grid2, Modal, Paper, TablePagination, ThemeProvider, Toolbar, Typography } from '@mui/material';
+import { AppBar, Box, Button, Container, createTheme, debounce, Grid2, Modal, Paper, TablePagination, ThemeProvider, Toolbar, Typography } from '@mui/material';
 import { Pets, Send } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 
@@ -14,7 +14,7 @@ const DogSearchPage: React.FC = () => {
     const [page, setPage] = useState(0);
     const [numDogsPerPage, setNumDogsPerPage] = useState(15);
     const [totalDogs, setTotalDogs] = useState(1);
-    const [searchParams, setSearchParams] = useState<any>({ sort: 'name:asc' });
+    const [searchParams, setSearchParams] = useState<DogSearchParams>({ sort: 'name:asc', ageMin: 0, ageMax: 30 });
     const [favoriteDogs, setFavoriteDogs] = useState<Dog[]>([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedLocations, setSelectedLocations] = useState<Location[]>([]);
@@ -26,6 +26,7 @@ const DogSearchPage: React.FC = () => {
     const debouncedSearchParams = useDebounce(searchParams, 500);
 
     const fetchDebounceDogs = useCallback(async () => {
+        console.log(debouncedSearchParams);
         if (isFetching.current) return;
         isFetching.current = true;
         let cursor = page * numDogsPerPage;

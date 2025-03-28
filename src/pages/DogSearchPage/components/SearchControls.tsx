@@ -1,4 +1,4 @@
-import { Box, Button, Chip, Divider, FormControl, Grid2, InputLabel, List, ListItem, ListItemButton, ListItemText, MenuItem, OutlinedInput, Paper, TextField, Typography } from '@mui/material';
+import { Box, Button, Chip, Divider, FormControl, Grid2, InputLabel, List, ListItem, ListItemButton, ListItemText, MenuItem, OutlinedInput, Paper, Slider, TextField, Typography } from '@mui/material';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { fetchAPI, Location } from '../../../services/fetchapi';
@@ -17,7 +17,7 @@ const SearchControls: React.FC<SearchControlsProps> = ({
   searchParams,
   setSearchParams,
   selectedLocations,
-  onLocationsChange, 
+  onLocationsChange,
 }) => {
   const [selectedBreeds, setSelectedBreeds] = useState<string[]>(searchParams.breeds || []);
   const [sortOption, setSortOption] = useState<string>(searchParams.sort || 'name:asc');
@@ -27,6 +27,7 @@ const SearchControls: React.FC<SearchControlsProps> = ({
   const [citySearch, setCitySearch] = useState<string>('');
   const [stateSearch, setStateSearch] = useState<string>('');
   const [zipCodeSearch, setZipCodeSearch] = useState<string>('');
+  const [ageRange, setAgeRange] = useState<number[]>([0,30]);
   
 
   const stateOptions = [
@@ -63,6 +64,17 @@ const SearchControls: React.FC<SearchControlsProps> = ({
   const handleSortChange = (e: SelectChangeEvent<string>) => {
     setSortOption(e.target.value);
     setSearchParams({ ...searchParams, sort: e.target.value });
+  };
+
+  const handleAgeRangeChange = (e: Event, newValue: number[] | number, activeThumb: number) => {
+    console.log(newValue);
+    if (typeof(newValue) === "number"){
+      setAgeRange([newValue, newValue]);
+      setSearchParams({ ...searchParams, ageMin: newValue, ageMax: newValue });
+    } else{
+      setAgeRange(newValue);
+      setSearchParams({ ...searchParams, ageMin: newValue[0], ageMax: newValue[1] });
+    }
   };
 
   const handleCitySearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -137,6 +149,17 @@ const SearchControls: React.FC<SearchControlsProps> = ({
               <MenuItem value="breed:desc">Breed Descending</MenuItem>
             </Select>
           </FormControl>
+          <Box sx={{margin: 2}}>
+            <Typography>
+              Age Range (Yrs)
+            </Typography>
+            <Slider
+            value={ageRange}
+            onChange={handleAgeRangeChange}
+            valueLabelDisplay='auto'
+            max={30}
+            />
+          </Box>
           <Divider sx={{ my: 2 }} />
           <Typography variant="h6" gutterBottom>Location Search</Typography>
           <Grid2 container spacing={1} alignItems="center">
