@@ -85,14 +85,14 @@ const LoginPage: React.FC = () => {
           },
         },
     });
-    
+
     return (
         <ThemeProvider theme={darkTheme}>
-            <Grid2 container direction='row' sx={{ height: '100vh' }}>
-                <Grid2 sx={{ xs: 12, md: 6, display: { xs: 'none', md: 'flex' } }}>
+            <Grid2 container direction='row' sx={{ height: '100vh', justifyContent: 'flex-start', alignItems: 'flex-start' }}>
+                <Grid2 size={8} sx={{ display: { xs: 'none', md: 'flex' }, maxWidth: '60vw', height: '100%' }}>
                     <StyledImage src={dog} alt="Dog" />
                 </Grid2>
-                <Grid2 sx={{ xs: 12, md: 6, backgroundColor: '#121212', width: '40vw', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                <Grid2 size={4} sx={{ backgroundColor: '#121212', width: '40vw', display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
                     <Box sx={{ width: '80%', maxWidth: '400px', p: 3 }}>
                     <Box sx={{ textAlign: 'center', mb: 4 }}>
                         <img src={logo} alt="Fetch Logo" style={{ width: '100%', maxWidth: '200px', margin: '0 auto 1rem' }} />
