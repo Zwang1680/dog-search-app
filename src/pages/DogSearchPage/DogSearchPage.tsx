@@ -21,12 +21,11 @@ const DogSearchPage: React.FC = () => {
     const nav = useNavigate();
     const isFetching = useRef(false);
 
-    const numDogOptions = [15, 30, 50, 100]
+    const numDogOptions = [10, 15, 30, 50, 100]
 
     const debouncedSearchParams = useDebounce(searchParams, 500);
 
     const fetchDebounceDogs = useCallback(async () => {
-        console.log(debouncedSearchParams);
         if (isFetching.current) return;
         isFetching.current = true;
         let cursor = page * numDogsPerPage;
@@ -143,7 +142,7 @@ const DogSearchPage: React.FC = () => {
                             endIcon={<Send/>} 
                             onClick={handleSendFavorites}
                         >
-                            Match
+                            Match!
                         </Button>
                     </Box>
                     <Button sx={{margin: 1}} key='Filters' onClick={() => setIsModalOpen(true)}>

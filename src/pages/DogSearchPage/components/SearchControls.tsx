@@ -67,7 +67,6 @@ const SearchControls: React.FC<SearchControlsProps> = ({
   };
 
   const handleAgeRangeChange = (e: Event, newValue: number[] | number, activeThumb: number) => {
-    console.log(newValue);
     if (typeof(newValue) === "number"){
       setAgeRange([newValue, newValue]);
       setSearchParams({ ...searchParams, ageMin: newValue, ageMax: newValue });

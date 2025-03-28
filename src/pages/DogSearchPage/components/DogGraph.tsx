@@ -26,7 +26,7 @@ const DogGraph: React.FC<DogGraphProps> = ({ dogs, favoriteDogs, onAddToFavorite
         setIsInfoOpen(true);
     }
 
-    const createDogCard = (dog: Dog) => {
+    const createDogCard = (dog: Dog, isFav: boolean) => {
         return (
             <ImageListItem key={dog.id}>
             <img
@@ -35,6 +35,20 @@ const DogGraph: React.FC<DogGraphProps> = ({ dogs, favoriteDogs, onAddToFavorite
                 loading="lazy"
                 onClick={openDogInfo(dog)}
             />
+            { isFav ? (
+                <ImageListItemBar
+                title={dog.name}
+                subtitle={dog.breed}
+                position="bottom"
+                actionIcon={(
+                        <CardActions>
+                            <Fab color='warning' size='small' aria-label='remove' onClick={() => onRemoveFromFavorites(dog)}>
+                                <Remove/>
+                            </Fab>
+                        </CardActions>
+                )}
+            />
+            ) : (
             <ImageListItemBar
                 title={dog.name}
                 subtitle={dog.breed}
@@ -54,27 +68,45 @@ const DogGraph: React.FC<DogGraphProps> = ({ dogs, favoriteDogs, onAddToFavorite
                         </CardActions>
                     )}
                     />
+                )
+            }
             </ImageListItem>
         );
     } 
 
     return (
-        <Container className="dogListContainer" maxWidth="xl">
-            <Grid2 container direction="column" spacing={2} sx={{
-                justifyContent: "flex-start",
-                alignItems: "stretch",
+        <Container maxWidth='xl'>
+            <Grid2 container direction='column' spacing={2} sx={{
+                justifyContent: 'center',
+                alignItems: 'center',
             }}>
-                <Grid2 size={{ xs:12, md: 1}}>
-                    <Button onClick={toggleDrawer(true)}>
-                        <ArrowForwardIos/>
-                    </Button>
+                <Grid2 size={12}>
+                    <Box sx={{width: '100%', display:'flex', justifyContent:'flex-start'}}>
+                        <Button onClick={toggleDrawer(true)}>
+                            <Typography variant="body2">
+                                Show Favorite Dogs
+                            </Typography>
+                            <ArrowForwardIos/>
+                        </Button>
+                    </Box>
                 </Grid2>
-                <Grid2 size={{ xs: 12, md: 11}}>
+                <Grid2 size={{ xs: 12, md: 11}} style={{ height: '100%' }}>
+                    {dogs.length > 0 ? (
                     <ImageList sx={{ width: '100%', height: '100%'}} cols={5}>
                         {dogs.map((dog) => (
-                            createDogCard(dog)
+                            createDogCard(dog, false)
                         ))}
                     </ImageList>
+                    ) : (
+                        <Box sx={{
+                            display: 'flex',
+                            justifyContent: 'center',
+                            alignItems: 'center', 
+                            height: '100%', 
+                            width: '100%' }}>
+                            <Typography variant='h4'>No dogs match filter</Typography>
+                        </Box>
+                    )}
                 </Grid2>
             </Grid2>
             <Drawer anchor='left' open={isFavVisible} onClose={toggleDrawer(false)}>
@@ -93,25 +125,7 @@ const DogGraph: React.FC<DogGraphProps> = ({ dogs, favoriteDogs, onAddToFavorite
                     <Divider/>
                     <ImageList sx={{ width: '100%', padding: 1}} variant="quilted" cols={1} rowHeight={200}>
                         {favoriteDogs.map((dog) => (
-                            <ImageListItem key={dog.id}>
-                                <img
-                                    src={dog.img}
-                                    alt={dog.name}
-                                    loading="lazy"
-                                />
-                                <ImageListItemBar
-                                    title={dog.name}
-                                    subtitle={dog.breed}
-                                    position="bottom"
-                                    actionIcon={(
-                                            <CardActions>
-                                                <Fab color='warning' size='small' aria-label='remove' onClick={() => onRemoveFromFavorites(dog)}>
-                                                    <Remove/>
-                                                </Fab>
-                                            </CardActions>
-                                    )}
-                                />
-                            </ImageListItem>
+                            createDogCard(dog, true)
                         ))}
                     </ImageList>
                 </Box>
