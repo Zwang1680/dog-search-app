@@ -5,8 +5,8 @@ import logo from './assets/fetch_logo.png'
 import { fetchAPI } from '../../services/fetchapi'
 import { useNavigate } from 'react-router-dom';
 import './LoginPage.css'
-import { Box, Button, CircularProgress, createTheme, Grid2, styled, TextField, ThemeProvider, Typography } from '@mui/material';
-import { ThemeContext } from '@emotion/react';
+import { Box, Button, CircularProgress, Grid2, styled, TextField, Typography } from '@mui/material';
+
 
 const LoginPage: React.FC = () => {
     const [name, setName] = useState('');

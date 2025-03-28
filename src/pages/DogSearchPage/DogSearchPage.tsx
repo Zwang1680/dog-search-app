@@ -3,11 +3,10 @@ import { Dog, DogSearchParams, fetchAPI, Location } from '../../services/fetchap
 import SearchControls from './components/SearchControls';
 import useDebounce from './components/useDebounce';
 import DogGraph, { resetDog } from './components/DogGraph';
-import { AppBar, Box, Button, Container, createTheme, debounce, Grid2, Modal, Paper, TablePagination, ThemeProvider, Toolbar, Typography } from '@mui/material';
+import { AppBar, Box, Button, Container, createTheme, Grid2, Modal, Paper, TablePagination, ThemeProvider, Toolbar, Typography } from '@mui/material';
 import { Pets, Send } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import DogInfo from './components/DogInfo';
-import { match } from 'assert';
 
 const DogSearchPage: React.FC = () => {
     const [breeds, setBreeds] = useState<string[]>([]);

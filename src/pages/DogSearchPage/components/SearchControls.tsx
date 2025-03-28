@@ -1,6 +1,6 @@
-import { Box, Button, Chip, Divider, FormControl, Grid2, InputLabel, List, ListItem, ListItemButton, ListItemText, MenuItem, OutlinedInput, Paper, Slider, TextField, Typography } from '@mui/material';
+import { Box, Button, Chip, Divider, FormControl, Grid2, InputLabel, List, ListItem, ListItemButton, ListItemText, MenuItem, Paper, Slider, TextField, Typography } from '@mui/material';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { fetchAPI, Location } from '../../../services/fetchapi';
 import useDebounce from './useDebounce';
 
