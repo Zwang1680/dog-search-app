@@ -5,6 +5,9 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 [react-map-gl](https://visgl.github.io/react-map-gl/) was utilized as well which requires an API key to see the maps.
 
 To view the latest deployment go [here](https://genuine-speculoos-c71148.netlify.app/)
+
+## Example
+
 ![til](./Dog_Search_Example.gif)
 
 
