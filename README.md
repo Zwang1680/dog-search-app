@@ -2,7 +2,9 @@
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
-We also utilized [react-map-gl](https://visgl.github.io/react-map-gl/) which requires an API key to see the maps.
+[react-map-gl](https://visgl.github.io/react-map-gl/) was utilized as well which requires an API key to see the maps.
+
+To view the latest deployment go [here](https://genuine-speculoos-c71148.netlify.app/)
 
 ## Available Scripts
 
